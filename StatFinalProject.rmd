@@ -1,0 +1,264 @@
+---
+title: "Exploring Lamar Jackson and Patrick Mahomes Passing"
+author: "Dylan Caldwell and Ansh Aggarwal"
+date: "2024-04-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE)
+#Set up options for the pdf
+```
+
+## Lamar Jackson Vs. Patrick Mahomes
+
+For a long time now, people have been comparing quarterbacks and trying to guess who is better using insights. When you have a clean set of data I feel like this is a lot easier said than done. For this project we are using a data set that was found on kaggle. The dataset is "Passing Yards in the NFL from 2001-2023". We plan on using graphs and visualizations in this project to compare the two as well as a table. We also plan on using multiple packages to make this happen such as ggplot2, dplyr, knitr, readr, and kableExtra.
+
+I think it is important that we give a background on each of these quarterbacks to understand the visualizations and tables. Patrick Mahomes is the quarterback for the Kansas City Chiefs. He was drafted in the 2017 NFL Draft at 10th overall. He has won two Superbowls with the team and is a two time MVP.
+
+The other quarterback we will be looking at is Lamar Jackson. Lamar is the quarterback for the Baltimore Ravens. He was drafted 32nd overall in the 2018 NFL draft. He has no Superbowl wins or appearences, but also is a two time MVP.
+
+I want to make notice that when comparing these quarterbacks through the data set we will only be looking at individual statistics and not team success.
+
+```{r packages, echo=FALSE}
+#download needed packages and dataset
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(readr)
+library(readr)
+library(kableExtra)
+passing_cleaned <- read_csv("passing_cleaned.csv")
+View(passing_cleaned)
+
+```
+
+## Exploring Data Using Plots
+
+For the first part of the data we are going to take a look at graphs related to Lamar Jackson. So, the first one you will see is going to be a graph with relation to his passing yards and age. On the x-axis you will have his age, and on the y his passing yards. This data visualization will give us an insight on how he may do in coming years. On the left of the points we have Lamars passing yards for that season and on the right we have his age. Also given in this plot we have a line to help to predict future stats. Also giving background for Lamar Jackson, he is a young quarterback who was drafted in 2018 at 32nd overall. He plays for the Baltimore Ravens and has a bright future ahead of him.
+
+```{r Lamar Passing Graph, echo=FALSE}
+"Lamar" <- passing_cleaned %>%
+  filter(Player == "Lamar Jackson")
+ggplot(Lamar, aes(Age, Yds)) +
+  geom_point() +
+  theme_linedraw() +
+  ggtitle("Lamar Over Years")  +
+  geom_text(aes(label = Age), vjust = -0.5) +
+  geom_text(aes(label = Yds), vjust = -0.5, hjust = 1.5) + 
+  geom_smooth()
+```
+
+This graph labeled "Lamar Over Years" is a helpful insight into the future of Lamar Jackson's career. You can see very clearly that his best season was actually his most recent, suggesting a possible increase in his performance in the coming years. Looking even deeper into the graph we see his second year was surprisingly his second best in terms of yards.
+
+The reason why this can be significant is because it shows that Lamar is honestly not increasing past that year and actually decreased a little bit. This shows that throughout future years he may be more consistent around the 3,000 yards range.
+
+```{r Patrick Mahomes Passing Graph, echo=FALSE}
+"Mahomes" <- passing_cleaned %>%
+  filter(Player == "Patrick Mahomes")
+ggplot(Mahomes, aes(Age, Yds)) +
+  geom_point() +
+  theme_linedraw() +
+  ggtitle("Mahomes Over Years")  +
+  geom_text(aes(label = Age), vjust = -0.5) +
+  geom_text(aes(label = Yds), vjust = -0.5, hjust = 1.5) + 
+  geom_smooth()
+```
+
+The graph above labeled "Mahomes Over Years" gives us an insight onto his passing yards. When looking at this graph we can see that he has been roughly consistent with an upper 4500-5000 yards per season. His most recent season is a little bit on the lower side compared to others, but still above all of Lamar Jacksons seasons.
+
+Using this data we can make an inference that Patrick Mahomes will continue on his current path of getting 4,000 plus which is higher than all of Lamar Jacksons seasons.
+
+```{r Patrick Mahomes vs Lamar Completions, echo=FALSE}
+"Mahomes and Lamar" <- passing_cleaned %>%
+  filter(Player %in% c("Patrick Mahomes", "Lamar Jackson"))
+ggplot(`Mahomes and Lamar`, aes(x = Age, y = Cmp, fill = Player)) +
+  geom_col(stat = "identity", position = position_dodge()) +
+  ggtitle("Lamar and Mahomes Completions for each Age") +
+  geom_text(aes(label = Cmp), vjust = -0.5)
+```
+
+The above graph is a good direct comparison to show the completions between the players at each age. If you see at age 22, Lamar Jackson has a lot more completions compared to Patrick Mahomes. This is because,Mahomes actually played as a back up. It is clear though that past that, Mahomes leads ahead of Lamar Jackson every single year. Using the number above each bar graph, you can see the exact number of completions.
+
+I also decided to include the ages that are only Patrick Mahomes and Lamar Jackson because it is important to see the longevity of the players. For example, when looking at Mahomes for ages 27 and 28 you can see he did better than any other year of his career. Including these can show that maybe even Lamar can get up higher in his upcoming years.
+
+Let's take a look at another graph to help us to analyze these two players. Looking at the following graph above, you can see that the passing yards is on the left of each point and the right is the age.
+
+We decided to keep the bars where only one player is visible because it allows us to see the difference in age when they were drafted. Lamar Jackson is clearly younger, showing that he has more room to grow potentially. Patrick Mahomes however, is older and already in his prime.
+
+## Summary Table Measurements
+
+For the next comparison we are going to use a summary table. The summary table is going to give us the average of all the different variables for each quarterback throughout all their seasons. This data will give us a great insight into who the better quarterback could potentially be. Before we do the summary tables we should list out the most important stats that we should be looking at. We should mainly focus on the passing yards, completions, attempts, touchdowns, and touchdown percentages. These should give us the best insight on the future of these players.
+
+```{r Summary Table, echo=FALSE}
+"player_comparison" <- `Mahomes and Lamar` %>%
+  group_by(Player) %>%
+  summarise(
+    'Avg_PassingYards'= mean(Yds),
+    'Avg_Att'= mean(Att),
+    'Avg_Cmp'= mean(Cmp),
+    'Avg_TD'= mean(TD)
+  )
+player_comparison <- player_comparison %>%
+  rename(
+    "Average Passing Yards" = Avg_PassingYards,
+    "Average Attempts" = Avg_Att,
+    "Average Completions" = Avg_Cmp,
+    "Average Touchdowns" = Avg_TD
+  )
+kable(player_comparison, caption = "Lamar and Mahomes Comparison")
+
+```
+
+From the above "Lamar and Mahomes Comparison" we can see that Lamar Jackson and Patrick Mahomes are somewhat similar. However, it is clear that Patrick Mahomes leads in all stats. This table is definitely in his favor, and can be used to argue a better future for him. Looking specifically at passing yards first we can see that Patrick Mahomes averages roughy 4075 passing yards over his seasons, while for Lamar Jackson it is only 2795. That difference of 1,280 is pretty significant.
+
+Next, looking at the average attempts, Patrick Mahomes averages around 523 passing attempts per season. Lamar Jackson averages 367 attempts each season on the dot. Now, the higher number of attempts for Patrick Mahomes could be why he has more passing yards. What will really let us know who is better is looking at the completions compared to these attempts.
+
+The average completions per season for Patrick Mahomes is roughly 348 which is above Lamar Jackson's 238. So, although Patrick Mahomes is making more attempts, he also has more completions. However, I do want to take a look at the difference between the two in terms of their attempts and completions. The difference between the two in terms of attempts is 156 on average every season. While the difference between them in terms of comletions is 110. So, although Patrick Mahomes is making more attempts and completions, Lamar is completing passes at a higher rate.
+
+To look even more into the stats we are going to make another table. For this table we are going to focus on statistics for interceptions only. Interceptions are a number that you normally want to keep low. In case you do not know, interceptions occur when the opposing team intercepts the ball on defense. For the interceptions our table will look at all 5 quartiles, including, median, minimum, maximum. We will also have a season count. Refer to the table below, "Interceptions Comparison".
+
+```{r Interception Table, echo=FALSE}
+summary_table <- `Mahomes and Lamar` %>%
+  group_by(Player) %>%
+  summarize(
+    count = n(),
+    minimum = min(Int),
+    first_quartile = quantile(Int, 0.25),
+    median = median(Int),
+    third_quartile = quantile(Int, 0.75),
+    maximum = max(Int),
+    arithmetic_mean = mean(Int)
+    )
+kable(summary_table, caption = "Interceptions Comparison") %>%
+  kable_styling(bootstrap_options = "striped") %>%
+  column_spec(1:8, extra_css = "font-size: smaller;")
+```
+
+First, we should do a comparison of the average amount of interceptions that each player has thrown. Lamar Jackson averages throwing around 7.5 interceptions per season while Patrick Mahomes is around 9.5. So Patrick Mahomes averages around 2 more interceptions per season compared to Lamar Jackson.
+
+I also think it is important to look at the median. The median for Lamamr Jackson is 7 interceptions, while for Patrick Mahomes it is 12. That is a difference of 5 interceptions and is a lot larger than the difference between the averages. This indicates a skew in the data for Patrick Mahomes.
+
+It is also very interesting to note that has higher interceptions related to everything besides the first quartile. This shows us that Lamar Jackson has more interceptions on the lower side of the 25% of the interception data compared to Patrick Mahomes. This actually is in Lamar Jacksons favor, as well as all of the interception data. From this specific table we can conclude that Lamar Jackson throws interceptions less frequently than Patrick Mahomes does. It may be helpful
+
+## Interception Compsrison with Boxplot
+
+```{r Interception Boxplot, echo=FALSE}
+ggplot(`Mahomes and Lamar`, aes(x=Player, y=Int, fill=Player)
+       ) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(title = "Interception Box and Whisker Plot",
+       x = "Players",
+       y = "Interceptions") +
+  scale_y_continuous(breaks = seq(min(`Mahomes and Lamar`$Int), max(`Mahomes and Lamar`$Int)))
+```
+
+The following boxplot gives us a more visual representation of the summary table we used earlier related to interceptions with each player.
+
+Looking closely at the visual we can see that Lamar Jacksons has more dense interception values with a two outliers. Those outliers are his 13 interceptions and 3 interceptions. Other than those two outliers it is visible that he is normally throwing around 6-9 interceptions.
+
+Patrick Mahomes on the otherhand varies a lot more and has a low of 1 interception and a high of 14. Throughout his seasons the box and whisker plot shows a lot more variation and is not throwing consistently less interceptions like Lamar Jackson.
+
+## Conclusion
+
+Looking at all the different stats for these two players we can see that Patrick Mahomes and Lamar Jackson are both solid quarterbacks. They each shine in different aspects of the game, however I think it is clear who has a higher chance of being better in the future.
+
+The first comparison of the passing yards graphs tells us that Patrick Mahomes is more than likely going to beat him out in that area of the game. Patrick Mahomes has higher passing yards in almost every season compared to Lamar Jackson, and it seems like he is not going to stop. 
+
+Also looking at the completion bar graph we can see that Patrick Mahomes also takes the advantage here. Lamar Jackson does not beat him out in any of the bars really here, so I would say that Patrick Mahomes would take this statistic.
+
+Looking at the summary table for the average statistics we can also see that Patrick Mahomes takes most of these categories. Although Lamar Jackson has a lower interception average so I think that is something important that we should also take a look into.
+
+Looking at the interception summary table we can see that Lamar Jackson actually has lower interceptions on average. This is good for Lamars case and shows that he is turning the ball over less frequently. I would say that Lamar Jackson has the advantage in the interception category. 
+
+Overall looking at the graphs and tables that we have made and presented we can use these stats to predict Patrick Mahomes will be a better quarterback throughout the future years. Patrick Mahomes has better passing yards, touchdowns, and completions. The only thing that Lamar Jackson has on Patrick Mahomes is the inteception category. From our analysis however, we do not think that is enough to make him the better player and have to give the crown to Patrick Mahomes. So if you have any fantasy football years coming up or want to bet on future MVPS choose Patrick Mahomes!
+
+\newpage
+
+## Code Appendix
+```{r code-appendix, echo=TRUE, eval=FALSE}
+#Download Needed Packages and Dataset
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(readr)
+library(readr)
+library(kableExtra)
+passing_cleaned <- read_csv("passing_cleaned.csv")
+View(passing_cleaned)
+
+#Passing Yard Graph for Lamar Jackson with Filtered Data
+"Lamar" <- passing_cleaned %>%
+  filter(Player == "Lamar Jackson")
+ggplot(Lamar, aes(Age, Yds)) +
+  geom_point() +
+  theme_linedraw() +
+  ggtitle("Lamar Over Years")  +
+  geom_text(aes(label = Age), vjust = -0.5) +
+  geom_text(aes(label = Yds), vjust = -0.5, hjust = 1.5) + 
+  geom_smooth()
+
+#Passing Yard Graph for Patrick Mahomes with Filtered
+"Mahomes" <- passing_cleaned %>%
+  filter(Player == "Patrick Mahomes")
+ggplot(Mahomes, aes(Age, Yds)) +
+  geom_point() +
+  theme_linedraw() +
+  ggtitle("Mahomes Over Years")  +
+  geom_text(aes(label = Age), vjust = -0.5) +
+  geom_text(aes(label = Yds), vjust = -0.5, hjust = 1.5) + 
+  geom_smooth()
+
+#Bar Graph Comparison for Completions
+"Mahomes and Lamar" <- passing_cleaned %>%
+  filter(Player %in% c("Patrick Mahomes", "Lamar Jackson"))
+ggplot(`Mahomes and Lamar`, aes(x = Age, y = Cmp, fill = Player)) +
+  geom_col(stat = "identity", position = position_dodge()) +
+  ggtitle("Lamar and Mahomes Completions for each Age") +
+  geom_text(aes(label = Cmp), vjust = -0.5)
+
+#Player Summary Table Comparison
+"player_comparison" <- `Mahomes and Lamar` %>%
+  group_by(Player) %>%
+  summarise(
+    'Avg_PassingYards'= mean(Yds),
+    'Avg_Att'= mean(Att),
+    'Avg_Cmp'= mean(Cmp),
+    'Avg_TD'= mean(TD)
+  )
+player_comparison <- player_comparison %>%
+  rename(
+    "Average Passing Yards" = Avg_PassingYards,
+    "Average Attempts" = Avg_Att,
+    "Average Completions" = Avg_Cmp,
+    "Average Touchdowns" = Avg_TD
+  )
+kable(player_comparison, caption = "Lamar and Mahomes Comparison")
+
+#Interception Table Comparison
+summary_table <- `Mahomes and Lamar` %>%
+  group_by(Player) %>%
+  summarize(
+    count = n(),
+    minimum = min(Int),
+    first_quartile = quantile(Int, 0.25),
+    median = median(Int),
+    third_quartile = quantile(Int, 0.75),
+    maximum = max(Int),
+    arithmetic_mean = mean(Int)
+    )
+kable(summary_table, caption = "Interceptions Comparison") %>%
+  kable_styling(bootstrap_options = "striped") %>%
+  column_spec(1:8, extra_css = "font-size: smaller;")
+
+#Interception Box and Whisker Plot
+ggplot(`Mahomes and Lamar`, aes(x=Player, y=Int, fill=Player)
+       ) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(title = "Interception Box and Whisker Plot",
+       x = "Players",
+       y = "Interceptions") +
+  scale_y_continuous(breaks = seq(min(`Mahomes and Lamar`$Int), max(`Mahomes and Lamar`$Int)))
+```
